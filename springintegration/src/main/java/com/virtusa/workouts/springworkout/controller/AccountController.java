@@ -3,18 +3,19 @@ package com.virtusa.workouts.springworkout.controller;
 import com.virtusa.workouts.springworkout.dto.ResponseDto;
 import com.virtusa.workouts.springworkout.service.AccountGateway;
 import com.virtusa.workouts.springworkout.service.AccountSystemGateway;
+import com.virtusa.workouts.springworkout.types.AccountBatchRequest;
 import com.virtusa.workouts.springworkout.types.AccountRequest;
 import org.apache.tomcat.jni.Poll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.messaging.*;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.ws.WebServiceMessage;
 
 @RestController
 public class AccountController {
@@ -45,6 +46,25 @@ public class AccountController {
         if(responseMessage !=null){
 
           response = (ResponseDto)responseMessage.getPayload();
+        }
+        System.out.println(response);
+        return response;
+    }
+
+    @RequestMapping(path = "/accountbatchrequest")
+    public ResponseDto getAccountBatchService(@RequestBody AccountBatchRequest accountBatchRequest) {
+
+        MessageChannel messageChannel = applicationContext.getBean("splitterInputChannel", MessageChannel.class);
+
+        Message message = new GenericMessage(accountBatchRequest);
+        messageChannel.send(message);
+        PollableChannel outputChannel = applicationContext.getBean("responseOutputChannel", PollableChannel.class);
+        ResponseDto response = null;
+        Message responseMessage = outputChannel.receive(10000);
+
+        if(responseMessage !=null){
+
+            response = (ResponseDto)responseMessage.getPayload();
         }
         System.out.println(response);
         return response;

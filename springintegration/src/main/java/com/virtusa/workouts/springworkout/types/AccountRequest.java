@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "name", "accountType"
 })
-@XmlRootElement(name = "accountRequest")
+
 public class AccountRequest {
 
     @XmlElement(required = true)
@@ -70,4 +70,12 @@ public class AccountRequest {
         this.name = value;
     }
 
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
 }

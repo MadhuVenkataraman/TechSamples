@@ -11,14 +11,22 @@
 
 		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+
     <int:channel id="inputChannel"></int:channel>
+    <int:channel id="aggregatorChannel">
+        <int:queue/>
+    </int:channel>
     <int:channel id="outputChannel">
-        <int:queue  capacity="100"/>
+        <int:queue />
     </int:channel>
     <int:channel id="requestChannel"></int:channel>
     <int:channel id="transformChannel"></int:channel>
     <int:channel id="routingChannel"></int:channel>
-    <int:channel id="errorChannel">
+    <int:channel id="splitterOutputChannel"></int:channel>
+    <int:channel id="responseOutputChannel">
+        <int:queue />
+    </int:channel>
+    <int:channel id="errorMessageChannel">
 
     </int:channel>
     <int:channel id="responseChannel">
@@ -39,14 +47,15 @@
                 expression="payload">
       <int:mapping value="from spend" channel="responseChannel"/>
       <int:mapping value="from grow" channel="responseChannel"/>
-      <int:mapping value="from savings" channel="errorChannel"/>
-      <int:mapping value="from credit" channel="errorChannel"/>
+      <int:mapping value="from savings" channel="errorMessageChannel"/>
+      <int:mapping value="from credit" channel="errorMessageChannel"/>
   </int:router>
 
     <int:transformer input-channel="transformChannel" output-channel="routingChannel"
                      ref="accountTransformService" method="transform">
     </int:transformer>
-    <int:filter input-channel="inputChannel" expression="!payload.contains('savings')"
+    <!--  expression="!payload.contains('savings')"also add experssion as inline-->
+    <int:filter input-channel="inputChannel" ref="payloadFilterService" method="filter"
             output-channel="requestChannel"  discard-channel="discardChannel"/>
 
     <int:transformer input-channel="discardChannel" output-channel="outputChannel"
@@ -55,11 +64,27 @@
     <int:transformer input-channel="responseChannel" output-channel="outputChannel"
                      ref="successMessageTransform" method="getPayload">
     </int:transformer>
-    <int:transformer input-channel="errorChannel" output-channel="outputChannel"
+    <int:transformer input-channel="errorMessageChannel" output-channel="outputChannel"
                      ref="creditCardErrorMsgTransform" method="getPayload">
     </int:transformer>
+    <int:poller default="true" max-messages-per-poll="10" receive-timeout="1000" fixed-delay="10">
+
+    </int:poller>
+
+    <int:splitter input-channel="splitterInputChannel" output-channel="splitterOutputChannel"
+                  ref="accountRequestSplitter" method="accountRequestSplitter"/>
+
+    <int:aggregator  input-channel="outputChannel"   output-channel="aggregatorChannel"
+                     correlation-strategy-expression="payload.payload"
+                     release-strategy-expression="size() >1"
+                       send-partial-result-on-expiry="false" send-timeout="3000"/>
+    <bean id="messageStore" class="org.springframework.integration.store.SimpleMessageStore" />
+
+
+    <int:service-activator input-channel="aggregatorChannel" output-channel="responseOutputChannel"  ref="accountBatchAggregateService" method="getResponse"/>
+    <int:transformer input-channel="splitterOutputChannel" ref="accountBatchTransformService" method="request" output-channel="inputChannel" />
     <!--
-    <int:chain input-channel="inputChannel" output-channel="soapResultChannel">
+    <int:chain input-channel="inputChannel" output-channel="soapResultChannel
         <ws:header-enricher>
             <ws:soap-action expression="headers.soapaction"/>
         </ws:header-enricher>

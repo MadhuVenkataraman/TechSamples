@@ -4,18 +4,18 @@ import javax.xml.bind.annotation.*;
 import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-        "accountRequests"
+        "accountBatchRequest"
 })
 @XmlRootElement(name = "accountRequests")
 public class AccountBatchRequest {
     @XmlElement
-    private List<AccountRequest> accountRequests;
+    private List<AccountRequest> accountBatchRequest;
 
-    public List<AccountRequest> getAccountRequests() {
-        return accountRequests;
+    public List<AccountRequest> getAccountBatchRequest() {
+        return accountBatchRequest;
     }
 
-    public void setAccountRequests(List<AccountRequest> accountRequests) {
-        this.accountRequests = accountRequests;
+    public void setAccountBatchRequest(List<AccountRequest> accountBatchRequest) {
+        this.accountBatchRequest = accountBatchRequest;
     }
 }

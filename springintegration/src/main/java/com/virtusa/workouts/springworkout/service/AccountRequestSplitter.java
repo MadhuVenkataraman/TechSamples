@@ -9,8 +9,8 @@ import java.util.List;
 
 @Component
 public class AccountRequestSplitter {
-    @Splitter(inputChannel = "splitterInputChannel", outputChannel = "splitterOutputChannel")
-    public List<AccountRequest> accountRequestFilter(AccountBatchRequest accountBatchRequest){
-        return accountBatchRequest.getAccountRequests();
+
+    public List<AccountRequest> accountRequestSplitter(AccountBatchRequest accountBatchRequest){
+        return accountBatchRequest.getAccountBatchRequest();
     }
 }
