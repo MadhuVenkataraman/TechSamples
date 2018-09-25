@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ws="http://www.springframework.org/schema/integration/ws"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:oxm="http://www.springframework.org/schema/oxm"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd
+
+
+		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+    <int:channel id="requestChannel"></int:channel>
+    <int:channel id="responseChannel"></int:channel>
+
+    <!-- Initial service request -->
+    <int:gateway id="systemEntry" default-request-channel="requestChannel" default-reply-channel="responseChannel"
+                 service-interface="com.virtusa.workouts.springworkout.service.AccountWebService" />
+
+   <!-- <oxm:jaxb2-marshaller id="marshaller" context-path="com.virtusa.workouts.springworkout.types" />
+    --><ws:outbound-gateway id="aGateway"
+
+    request-channel="requestChannel" reply-channel="responseChannel"
+
+
+    uri="http://localhost:8080/ws/account"/>
+
+</beans>

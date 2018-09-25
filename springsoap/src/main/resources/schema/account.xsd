@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://springworkout.workouts.virtusa.com/"
+           xmlns:tns="http://springworkout.workouts.virtusa.com/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+    <xs:element name="accountRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string" />
+                <xs:element name="accountType" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="accountResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="account" type="tns:account" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="account">
+        <xs:sequence>
+
+            <xs:element name="accountId" type="xs:int" />
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="accountType" type="xs:string" />
+
+        </xs:sequence>
+    </xs:complexType>
+    </xs:schema>
