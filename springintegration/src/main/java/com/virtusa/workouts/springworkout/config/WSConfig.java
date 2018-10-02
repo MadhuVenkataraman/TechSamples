@@ -1,10 +1,13 @@
 package com.virtusa.workouts.springworkout.config;
 
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.config.annotation.EnableWs;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
@@ -41,5 +44,16 @@ public class WSConfig {
     public XsdSchema accountAddressServiceXsd()
     {
         return new SimpleXsdSchema(new ClassPathResource("schema/account.xsd"));
+    }
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean(name = "webServiceTemplate")
+    public  WebServiceTemplate webServiceTemplate(){
+        return new WebServiceTemplate();
     }
 }

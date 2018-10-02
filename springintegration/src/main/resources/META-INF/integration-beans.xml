@@ -39,7 +39,7 @@
 
    <!-- <oxm:jaxb2-marshaller id="marshaller" context-path="com.virtusa.workouts.springworkout.types" />
     -->
-    <ws:outbound-gateway id="accountGateway"
+    <ws:outbound-gateway id="accountGateway" web-service-template="webServiceTemplate"
     request-channel="requestChannel" reply-channel="transformChannel"
                          uri="http://localhost:8090/ws/account"/>
 

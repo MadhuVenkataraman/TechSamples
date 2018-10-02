@@ -1,0 +1,11 @@
+
+spring:
+  application:
+    name: spring-intergration
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8600/eureka
+    hostname: localhost
